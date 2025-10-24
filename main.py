@@ -116,7 +116,7 @@ def showabout():
     # 托盘在子线程中，为了防止出错，这里同样使用事件触发机制
     root.event_generate("<<ShowAbout>>")
 def __showabout(e):
-    show_info(root, 'AutoTex', '一个简单易用的本地公式识别工具。')
+    show_info(root, 'AutoTex2', '一个简单易用的本地公式识别工具。')
 
 def __quitApp():
     root.event_generate('<<QuitApp>>')
@@ -136,7 +136,7 @@ height = 700
 x = (screenwidth - width) / 2
 y = (screenheight - height) / 2 -50
 root.geometry('%dx%d+%d+%d' % (width, height, x, y))
-root.title("AutoTex")
+root.title("AutoTex2")
 root.iconbitmap('./asset/icon.ico')
 data.root=root
 
@@ -208,7 +208,7 @@ ep3.set_child(dispid)
 
 menu=(MenuItem('显示', lambda: root.deiconify(), default=True), MenuItem('关于', showabout), MenuItem('退出', __quitApp))
 iconimage=Image.open('./asset/icon.ico')
-icon=Icon('AutoTex', iconimage, 'AutoTex', menu)
+icon=Icon('AutoTex2', iconimage, 'AutoTex2', menu)
 icon.run_detached()
 
 root.bind('<Button-1>',lambda e: text.focus_force())
