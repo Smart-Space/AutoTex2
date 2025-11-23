@@ -4,7 +4,7 @@
 
 基于[OleehyO/TexTeller](https://github.com/OleehyO/TexTeller)的公式识别应用。
 
-相比于https://github.com/Smart-Space/AutoTex/使用的UniMERNet，TexTeller在印刷体、电子版公式，特别是复杂公式上表现得更好，并且直接支持含中文代码公式。
+相比于(AutoTex)(https://github.com/Smart-Space/AutoTex)使用的UniMERNet，TexTeller在印刷体、电子版公式，特别是复杂公式上表现得更好，并且直接支持含中文代码公式。
 
 ![](./screenshot/ch.png)
 
