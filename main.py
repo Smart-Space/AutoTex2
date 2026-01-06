@@ -9,7 +9,7 @@ from pystray import Icon, MenuItem
 from tinui import *
 
 import data
-from process import _load_model, process_img
+
 
 
 def model_loaded(e):
@@ -144,10 +144,6 @@ root.bind("<<ModelLoaded>>", model_loaded)
 root.protocol("WM_DELETE_WINDOW", lambda: root.withdraw())
 root.update()
 
-threadpool=ThreadPoolExecutor(max_workers=1)
-
-threadpool.submit(_load_model)
-
 ui=BasicTinUI(root, bg='#f3f3f3')
 ui.pack(fill='both', expand=True)
 rp=ExpandPanel(ui, padding=(5, 5, 5, 5))
@@ -219,5 +215,11 @@ web=Webview(disp)
 web.pack(fill='both', expand=True)
 web.navigate(f"file:///{os.path.dirname(__file__)}/libs/index.html")
 web.bindjs('get_ctrl_v', cli_get, True)
+
+from process import _load_model, process_img
+
+root.update()
+threadpool=ThreadPoolExecutor(max_workers=1)
+threadpool.submit(_load_model)
 
 root.mainloop()
