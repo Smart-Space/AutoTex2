@@ -194,9 +194,9 @@ del dispitem
 
 vp2=VerticalPanel(ui,spacing=5)
 hp.add_child(vp2,weight=1)
-ep2=ExpandPanel(ui)
+ep2=ExpandPanel(ui, bg='#fafbfd', padding=(2,2,2,2))
 vp2.add_child(ep2,weight=1)
-ep3=ExpandPanel(ui)
+ep3=ExpandPanel(ui, bg='#ffffff', padding=(2,2,2,2))
 vp2.add_child(ep3,weight=1)
 
 ep2.set_child(canvasid)
