@@ -11,10 +11,11 @@ from tinui import *
 import data
 
 
-
 def model_loaded(e):
     change_info(f'准备就绪({data.device})')
     root.bind("<Control-v>", cli_get)
+    root.bind("<Control-c>", copy)
+    root.bind("<Control-Shift-C>", copy_mathml)
     root.bind("<<ImageInverted>>", img_inverted)
     root.bind("<<ImageNotInverted>>", img_not_inverted)
     root.bind("<<ImageProcessed>>", load_latex)
@@ -63,21 +64,25 @@ def cli_get(e=None):
     threadpool.submit(process_img)
     root.unbind("<Control-v>")
 
-def copy(e):
+def copy(e=None):
     root.clipboard_clear()
-    text=data.latexstring.replace('\\\\', '\\\\\n').strip()
+    text_content=data.latexstring.replace('\\\\', '\\\\\n').strip()
     if latex_add_code==0:
-        root.clipboard_append(text)
+        root.clipboard_append(text_content)
     elif latex_add_code==1:
-        root.clipboard_append(f"$${text}$$")
-    elif latex_add_code:
-        root.clipboard_append(f"\\begin{{equation}}{text}\\end{{equation}}")
+        root.clipboard_append(f"$${text_content}$$")
+    elif latex_add_code==2:
+        root.clipboard_append(f"\\begin{{equation}}{text_content}\\end{{equation}}")
+    change_info('已复制')
+    return 'break'
 
-def copy_mathml(e):
+def copy_mathml(e=None):
     if not data.latexstring:
         return
     root.clipboard_clear()
     root.clipboard_append(convert(data.latexstring))
+    change_info('已复制MathML')
+    return 'break'
 
 do_process=False
 def set_reverse(flag):
@@ -168,6 +173,8 @@ vp.add_child(ep,weight=1)
 textitem=ui.add_textbox((0,0), scrollbar=True)
 text=textitem[0]
 text.config(state='disabled')
+text.bind("<Control-c>", copy)
+text.bind("<Control-Shift-C>", copy_mathml)
 text.focus_set()
 textid=textitem[-1]
 del textitem
@@ -215,6 +222,8 @@ web=Webview(disp)
 web.pack(fill='both', expand=True)
 web.navigate(f"file:///{os.path.dirname(__file__)}/libs/index.html")
 web.bindjs('get_ctrl_v', cli_get, True)
+web.bindjs('get_ctrl_c', copy, True)
+web.bindjs('get_ctrl_shift_c', copy_mathml, True)
 
 from process import _load_model, process_img
 

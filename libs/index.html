@@ -7,6 +7,10 @@
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'v') {
                 window.get_ctrl_v()
+            } else if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+                window.get_ctrl_shift_c()
+            } else if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+                window.get_ctrl_c()
             }
         });
     </script>
