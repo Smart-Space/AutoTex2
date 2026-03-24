@@ -3,13 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <script>
+        let render_error = false;
         // 绑定control-v事件
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'v') {
                 window.get_ctrl_v()
             } else if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+                if (render_error) {
+                    e.preventDefault();
+                    return;
+                }
                 window.get_ctrl_shift_c()
             } else if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+                if (render_error) {
+                    e.preventDefault();
+                    return;
+                }
                 window.get_ctrl_c()
             }
         });
@@ -19,16 +28,25 @@
     <script type="text/javascript" src="./katex/contrib/auto-render.min.js"></script>
     <script>
         function render(latex) {
-            document.getElementsByClassName('math-container')[0].textContent = latex;
-            renderMathInElement(document.body, {
-                delimiters: [
-                    { left: '$$', right: '$$', display: true },
-                    { left: '$', right: '$', display: false },
-                    { left: '\\(', right: '\\)', display: false },
-                    { left: '\\[', right: '\\]', display: true }
-                ],
-                throwOnError: false
-            });
+            const container = document.getElementsByClassName('math-container')[0];
+            container.textContent = latex;
+            try {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        { left: '$$', right: '$$', display: true },
+                        { left: '$', right: '$', display: false },
+                        { left: '\\(', right: '\\)', display: false },
+                        { left: '\\[', right: '\\]', display: true }
+                    ],
+                    throwOnError: true
+                });
+                render_error = false;
+                window.render_ok();
+            } catch (err) {
+                render_error = true;
+                container.textContent = '渲染失败：' + (err && err.message ? err.message : '未知错误');
+                window.render_error();
+            }
         }
     </script>
     <style>

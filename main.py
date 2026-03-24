@@ -14,11 +14,12 @@ import data
 def model_loaded(e):
     change_info(f'准备就绪({data.device})')
     root.bind("<Control-v>", cli_get)
-    root.bind("<Control-c>", copy)
-    root.bind("<Control-Shift-C>", copy_mathml)
+    bind_copy_shortcuts()
     root.bind("<<ImageInverted>>", img_inverted)
     root.bind("<<ImageNotInverted>>", img_not_inverted)
     root.bind("<<ImageProcessed>>", load_latex)
+    root.bind("<<RenderError>>", render_error)
+    root.bind("<<RenderOk>>", render_ok)
 
 def img_inverted(e):
     onoff.on()
@@ -30,6 +31,7 @@ def load_latex(e):
     global do_process
     change_info('正在渲染公式')
     data.reverse=0
+    data.render_error=False
     root.bind("<Control-v>", cli_get)
     text.config(state='normal')
     text.delete(1.0, 'end')
@@ -83,6 +85,37 @@ def copy_mathml(e=None):
     root.clipboard_append(convert(data.latexstring))
     change_info('已复制MathML')
     return 'break'
+
+def copy_shortcut(e=None):
+    if data.render_error:
+        return 'break'
+    return copy(e)
+
+def copy_mathml_shortcut(e=None):
+    if data.render_error:
+        return 'break'
+    return copy_mathml(e)
+
+def render_error(e=None):
+    data.render_error=True
+    change_info('渲染失败')
+    unbind_copy_shortcuts()
+
+def render_ok(e=None):
+    data.render_error=False
+    bind_copy_shortcuts()
+
+def bind_copy_shortcuts():
+    root.bind("<Control-c>", copy_shortcut)
+    root.bind("<Control-Shift-C>", copy_mathml_shortcut)
+    text.bind("<Control-c>", copy_shortcut)
+    text.bind("<Control-Shift-C>", copy_mathml_shortcut)
+
+def unbind_copy_shortcuts():
+    root.unbind("<Control-c>")
+    root.unbind("<Control-Shift-C>")
+    text.unbind("<Control-c>")
+    text.unbind("<Control-Shift-C>")
 
 do_process=False
 def set_reverse(flag):
@@ -173,8 +206,7 @@ vp.add_child(ep,weight=1)
 textitem=ui.add_textbox((0,0), scrollbar=True)
 text=textitem[0]
 text.config(state='disabled')
-text.bind("<Control-c>", copy)
-text.bind("<Control-Shift-C>", copy_mathml)
+bind_copy_shortcuts()
 text.focus_set()
 textid=textitem[-1]
 del textitem
@@ -222,8 +254,10 @@ web=Webview(disp)
 web.pack(fill='both', expand=True)
 web.navigate(f"file:///{os.path.dirname(__file__)}/libs/index.html")
 web.bindjs('get_ctrl_v', cli_get, True)
-web.bindjs('get_ctrl_c', copy, True)
-web.bindjs('get_ctrl_shift_c', copy_mathml, True)
+web.bindjs('get_ctrl_c', copy_shortcut, True)
+web.bindjs('get_ctrl_shift_c', copy_mathml_shortcut, True)
+web.bindjs('render_error', render_error, True)
+web.bindjs('render_ok', render_ok, True)
 
 from process import _load_model, process_img
 
