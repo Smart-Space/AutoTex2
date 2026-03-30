@@ -8,6 +8,12 @@ from tkwebview import TkWebview as Webview
 from pystray import Icon, MenuItem
 from tinui import *
 
+from ctypes import windll
+windll.shcore.SetProcessDpiAwareness(2)
+factor = windll.shcore.GetScaleFactorForDevice(0) / 100
+from tinui.TinUIDialog import Dialog
+Dialog.set_scale(factor)
+
 import data
 
 
@@ -169,10 +175,10 @@ root=Tk()
 # 居中显示
 screenwidth = root.winfo_screenwidth()
 screenheight = root.winfo_screenheight()
-width = 1000
-height = 700
+width = int(1000 * factor)
+height = int(700 * factor)
 x = (screenwidth - width) / 2
-y = (screenheight - height) / 2 -50
+y = (screenheight - height) / 2 -int(50* factor)
 root.geometry('%dx%d+%d+%d' % (width, height, x, y))
 root.title("AutoTex2")
 root.iconbitmap('./asset/icon.ico')
@@ -183,6 +189,7 @@ root.protocol("WM_DELETE_WINDOW", lambda: root.withdraw())
 root.update()
 
 ui=BasicTinUI(root, bg='#f3f3f3')
+ui.set_scale(factor)
 ui.pack(fill='both', expand=True)
 rp=ExpandPanel(ui, padding=(5, 5, 5, 5))
 ui.bind("<Configure>", updateExpand)
@@ -218,7 +225,7 @@ onoff,onoffid=ui.add_onoff((0,0), bd=30, command=set_reverse, anchor='w')[-2:]
 bop.add_child(onoffid,40)
 para=ui.add_paragraph((0,0), text='原图', anchor='w')
 bop.add_child(para,160)
-combobutton=ui.add_combobox((0,0), width=150, height=115, text='公式包裹(默认无)', content=('无包裹','$$...$$','\\begin{equation}...'), command=latex_add, anchor='w')[-1]
+combobutton=ui.add_combobox((0,0), width=int(150*factor), height=int(115*factor), text='公式包裹(默认无)', content=('无包裹','$$...$$','\\begin{equation}...'), command=latex_add, anchor='w')[-1]
 bop.add_child(combobutton,120)
 
 canvasitem=ui.add_ui((0,0), bg='#fafbfd')# 用于存放图片
